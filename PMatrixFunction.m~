@@ -1,0 +1,38 @@
+function [P_1, P_1_inv] = PMatrixFunction(varepsilon_hat,lPoints,connection_type)
+
+%% Initialise blank matrices
+
+P_1 = zeros(lPoints,lPoints);
+
+%% Populate interior of P_1 matrix
+
+% Inner values
+
+for i = 2:lPoints-1
+    
+    P_1(i,i-1) = - varepsilon_hat; % sets below diagonals
+    P_1(i,i) = 2*varepsilon_hat; % sets diagonals
+    P_1(i,i+1) = - varepsilon_hat; % sets diagonals
+    
+end
+
+% Boundary values
+
+switch connection_type
+   case 'ConstantCurrent'
+        P_1(1,1) = 2/3*varepsilon_hat; % sets top corner
+        P_1(1,2) = - 1/varepsilon_hat; % sets top corner plus one to right
+        P_1(1,3) = - varepsilon_hat; % sets top corner plus one to right
+        P_1(end,end) = varepsilon_hat; % sets top corner
+        P_1(end,end-1) = - varepsilon_hat; % sets top corner plus one to right
+        P_1(end,end-2) = - varepsilon_hat; % sets top corner plus one to right
+   otherwise
+      disp('ERROR: Specified connection type is unknown.')
+      disp('Cannot correctly populate P1 Matrix.')
+end
+
+%% Compute inverse of P_1 matrix
+
+P_1_inv = inv(P_1);
+
+end
